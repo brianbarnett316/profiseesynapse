@@ -1,0 +1,17 @@
+{
+	"name": "Delete all product data",
+	"properties": {
+		"content": {
+			"query": "delete from dbo.Product",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "profiseesqlpool",
+				"poolName": "profiseesqlpool"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

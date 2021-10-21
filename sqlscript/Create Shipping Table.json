@@ -1,0 +1,17 @@
+{
+	"name": "Create Shipping Table",
+	"properties": {
+		"content": {
+			"query": "--DROP TABLE [dbo].[Shipping]\n\nCREATE TABLE [dbo].[Shipping]\n(\n    [ShippingId] int NOT NULL,\n    [CustomerId] NVARCHAR(100) NOT NULL,\n    [Shipping Address 1] NVARCHAR(100) NULL,\n    [Shipping City] NVARCHAR(100) NULL,\n    [Shipping State] NVARCHAR(100) NULL,\n    [Shipping Zip] NVARCHAR(100) NULL,\n    [Phone] NVARCHAR(100) NULL\n)\nWITH\n(\n    DISTRIBUTION = HASH (ShippingId),\n    CLUSTERED COLUMNSTORE INDEX\n)\nGO\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "profiseesqlpool",
+				"poolName": "profiseesqlpool"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

@@ -1,0 +1,29 @@
+{
+	"name": "5MinuteTumbleTrigger",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipeline": {
+			"pipelineReference": {
+				"referenceName": "Transfer latest Customers from Profisee",
+				"type": "PipelineReference"
+			},
+			"parameters": {
+				"StartTime": "@trigger().outputs.windowStartTime",
+				"EndTime": "@trigger().outputs.windowEndTime"
+			}
+		},
+		"type": "TumblingWindowTrigger",
+		"typeProperties": {
+			"frequency": "Minute",
+			"interval": 5,
+			"startTime": "2021-10-11T15:30:00Z",
+			"delay": "00:00:00",
+			"maxConcurrency": 50,
+			"retryPolicy": {
+				"intervalInSeconds": 30
+			},
+			"dependsOn": []
+		}
+	}
+}

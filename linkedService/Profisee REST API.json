@@ -1,0 +1,27 @@
+{
+	"name": "Profisee REST API",
+	"type": "Microsoft.Synapse/workspaces/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "RestService",
+		"typeProperties": {
+			"url": "https://profvmmspurview.profisee.biz/profisee/rest/v1",
+			"enableServerCertificateValidation": true,
+			"authenticationType": "Anonymous",
+			"authHeaders": {
+				"X-API-Key": {
+					"type": "AzureKeyVaultSecret",
+					"store": {
+						"referenceName": "ProfiseeKeyVault",
+						"type": "LinkedServiceReference"
+					},
+					"secretName": "profisee-rest-api-key"
+				}
+			}
+		},
+		"connectVia": {
+			"referenceName": "AutoResolveIntegrationRuntime",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

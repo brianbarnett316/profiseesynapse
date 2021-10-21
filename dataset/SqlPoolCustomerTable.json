@@ -1,0 +1,81 @@
+{
+	"name": "SqlPoolCustomerTable",
+	"properties": {
+		"annotations": [],
+		"type": "SqlPoolTable",
+		"schema": [
+			{
+				"name": "Id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Code",
+				"type": "nvarchar"
+			},
+			{
+				"name": "EnterDTM",
+				"type": "datetime2",
+				"scale": 3
+			},
+			{
+				"name": "EnterUserName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "LastChgDTM",
+				"type": "datetime2",
+				"scale": 3
+			},
+			{
+				"name": "LastChgUserName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Address 1",
+				"type": "nvarchar"
+			},
+			{
+				"name": "City",
+				"type": "nvarchar"
+			},
+			{
+				"name": "State",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Zip",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Phone",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Email",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CustomerSalesId",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CustomerShippingId",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "Customer"
+		},
+		"sqlPool": {
+			"referenceName": "profiseesqlpool",
+			"type": "SqlPoolReference"
+		}
+	},
+	"type": "Microsoft.Synapse/workspaces/datasets"
+}

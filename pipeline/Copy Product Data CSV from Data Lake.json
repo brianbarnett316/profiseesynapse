@@ -1,0 +1,233 @@
+{
+	"name": "Copy Product Data CSV from Data Lake",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy Product Data CSV from Data Lake",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "SqlPoolSink",
+						"allowCopyCommand": true
+					},
+					"enableStaging": true,
+					"stagingSettings": {
+						"linkedServiceName": {
+							"referenceName": "profiseesynapseworkspace-WorkspaceDefaultStorage",
+							"type": "LinkedServiceReference"
+						},
+						"path": "synapseworkspace/staging"
+					},
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "Code",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Code",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Name",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Name",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ProductGroupName",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ProductGroupName",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ProductGroupCode",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ProductGroupCode",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ProductCategoryCode",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ProductCategoryCode",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ProductCategoryName",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ProductCategoryName",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ProductSubCategoryCode",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ProductSubCategoryCode",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ProductSubCategoryName",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ProductSubCategoryName",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ColorName",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ColorName",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ColorCode",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ColorCode",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ClassName",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ClassName",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ClassCode",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ClassCode",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "MSRP",
+									"type": "String"
+								},
+								"sink": {
+									"name": "MSRP",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "MSRPCurrencyCodeName",
+									"type": "String"
+								},
+								"sink": {
+									"name": "MSRPCurrencyCodeName",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "MSRPCurrencyCodeCode",
+									"type": "String"
+								},
+								"sink": {
+									"name": "MSRPCurrencyCodeCode",
+									"type": "String"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "DataLakeCsv",
+						"type": "DatasetReference",
+						"parameters": {
+							"FolderName": {
+								"value": "@pipeline().parameters.FolderName",
+								"type": "Expression"
+							},
+							"FileName": {
+								"value": "@pipeline().parameters.FileName",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SqlPoolProductTable",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"parameters": {
+			"FolderName": {
+				"type": "string"
+			},
+			"FileName": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-10-19T16:21:07Z"
+	},
+	"type": "Microsoft.Synapse/workspaces/pipelines"
+}

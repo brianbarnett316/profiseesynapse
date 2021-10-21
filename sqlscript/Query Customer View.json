@@ -1,0 +1,17 @@
+{
+	"name": "Query Customer View",
+	"properties": {
+		"content": {
+			"query": "SELECT *\nFROM dbo.vCustomer\nORDER by LastChgDTM desc\n\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "profiseesqlpool",
+				"poolName": "profiseesqlpool"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

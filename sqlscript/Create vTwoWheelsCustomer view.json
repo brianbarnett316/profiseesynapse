@@ -1,0 +1,17 @@
+{
+	"name": "Create vTwoWheelsCustomer view",
+	"properties": {
+		"content": {
+			"query": "DROP VIEW [dbo].[vTwoWheelsCustomer]\nGO\n\nSET ANSI_NULLS ON\nGO\nSET QUOTED_IDENTIFIER ON\nGO\n\nCREATE VIEW [dbo].[vTwoWheelsCustomer]\nAS with cte as (\n    SELECT \n        row_number() over(partition by ID order by LastChgDTM desc) as rowNbr,\n        *\n    FROM dbo.Customer\n)\nSELECT \n     [Id]                \n    ,[Name]              \n    ,[Code]              \n    ,[EnterDTM]          \n    ,[EnterUserName]     \n    ,[LastChgDTM]        \n    ,[LastChgUserName]   \n    ,[Source System]     \n    ,[Customer Type]     \n    ,[Industry]          \n    ,[Address 1]         \n    ,[City]              \n    ,[State]             \n    ,[Zip]               \n    ,[Phone]             \n    ,[Email]             \n    ,[Region]            \n    ,[TwoWheelsID]\n    ,[Record Source]     \n    ,[Match Cluster]     \n    ,[Match Status]      \n    ,[Golden Record]     \nFROM cte\nWHERE rowNbr = 1 AND TwoWheelsID IS NOT NULL;\nGO",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "profiseesqlpool",
+				"poolName": "profiseesqlpool"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

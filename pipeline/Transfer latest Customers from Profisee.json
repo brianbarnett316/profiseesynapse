@@ -1,0 +1,289 @@
+{
+	"name": "Transfer latest Customers from Profisee",
+	"properties": {
+		"activities": [
+			{
+				"name": "Transfer latest Customer records from Profisee",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "RestSource",
+						"httpRequestTimeout": "00:01:40",
+						"requestInterval": "00.00:00:00.010",
+						"requestMethod": "GET",
+						"paginationRules": {
+							"AbsoluteUrl": "$.nextPage"
+						}
+					},
+					"sink": {
+						"type": "SqlPoolSink",
+						"allowCopyCommand": true
+					},
+					"enableStaging": true,
+					"stagingSettings": {
+						"linkedServiceName": {
+							"referenceName": "profiseesynapseworkspace-WorkspaceDefaultStorage",
+							"type": "LinkedServiceReference"
+						},
+						"path": "synapseworkspace/staging"
+					},
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "['internalId']"
+								},
+								"sink": {
+									"name": "Id",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"path": "['code']"
+								},
+								"sink": {
+									"name": "Code",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['name']"
+								},
+								"sink": {
+									"name": "Name",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['source System']"
+								},
+								"sink": {
+									"name": "Source System",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['customerType']"
+								},
+								"sink": {
+									"name": "Customer Type",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['industry']"
+								},
+								"sink": {
+									"name": "Industry",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['address Line 1']"
+								},
+								"sink": {
+									"name": "Address 1",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['city']"
+								},
+								"sink": {
+									"name": "City",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['state']"
+								},
+								"sink": {
+									"name": "State",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['zip']"
+								},
+								"sink": {
+									"name": "Zip",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['phone Number']"
+								},
+								"sink": {
+									"name": "Phone",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['email Address']"
+								},
+								"sink": {
+									"name": "Email",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['region']"
+								},
+								"sink": {
+									"name": "Region",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['cityLimitsID']"
+								},
+								"sink": {
+									"name": "CityLimitsID"
+								}
+							},
+							{
+								"source": {
+									"path": "['twoWheelsID']"
+								},
+								"sink": {
+									"name": "TwoWheelsID"
+								}
+							},
+							{
+								"source": {
+									"path": "['record Source']"
+								},
+								"sink": {
+									"name": "Record Source",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['match Cluster']"
+								},
+								"sink": {
+									"name": "Match Cluster",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['match Status']"
+								},
+								"sink": {
+									"name": "Match Status",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['golden Record']"
+								},
+								"sink": {
+									"name": "Golden Record",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['enterDTM']"
+								},
+								"sink": {
+									"name": "EnterDTM",
+									"type": "DateTime"
+								}
+							},
+							{
+								"source": {
+									"path": "['enterUserName']"
+								},
+								"sink": {
+									"name": "EnterUserName",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "['lastChgDTM']"
+								},
+								"sink": {
+									"name": "LastChgDTM",
+									"type": "DateTime"
+								}
+							},
+							{
+								"source": {
+									"path": "['lastChgUserName']"
+								},
+								"sink": {
+									"name": "LastChgUserName",
+									"type": "String"
+								}
+							}
+						],
+						"collectionReference": "$['data']"
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "Profisee_REST_API_Records_Get",
+						"type": "DatasetReference",
+						"parameters": {
+							"entityId": "Customer",
+							"pageSize": 1000,
+							"attributes": "[Source System],[CustomerType],[Industry],[Address Line 1],[City],[State],[Zip],[Phone Number],[Email Address],[Region],[CityLimitsID],[TwoWheelsID],[Record Source],[Match Cluster],[Match Status],[Golden Record]",
+							"filter": {
+								"value": "@concat('[lastChgDTM] gt ', replace(pipeline().parameters.StartTime, 'Z', ''), ' AND [lastChgDTM] le ', replace(pipeline().parameters.EndTime, 'Z', ''))",
+								"type": "Expression"
+							},
+							"orderBy": " ",
+							"dbaFormat": 1,
+							"recordCodes": " "
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SqlPoolCustomerTable",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"parameters": {
+			"StartTime": {
+				"type": "string"
+			},
+			"EndTime": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-10-19T14:34:10Z"
+	},
+	"type": "Microsoft.Synapse/workspaces/pipelines"
+}

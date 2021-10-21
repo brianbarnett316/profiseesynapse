@@ -1,0 +1,17 @@
+{
+	"name": "Create Product Table",
+	"properties": {
+		"content": {
+			"query": "--DROP TABLE [dbo].[Product] \n\nCREATE TABLE [dbo].[Product]\n(\n\t [Code]                     NVARCHAR(250) NOT NULL\n\t,[Name]                     NVARCHAR(250) NULL\n\t--,[EnterDTM]              [datetime2](3) NOT NULL\n\t--,[EnterUserName]         [nvarchar](250) NOT NULL\n\t--,[LastChgDTM]            [datetime2](3) NOT NULL\n\t--,[LastChgUserName]       [nvarchar](250) NOT NULL\n\n    ,[ProductGroupName]         NVARCHAR(250) NULL\n    ,[ProductGroupCode]         NVARCHAR(250) NULL\n    ,[ProductCategoryCode]      NVARCHAR(255) NULL\n    ,[ProductCategoryName]      NVARCHAR(255) NULL\n    ,[ProductSubCategoryCode]   NVARCHAR(100) NULL\n    ,[ProductSubCategoryName]   NVARCHAR(100) NULL\n    ,[ColorName]                NVARCHAR(100) NULL\n    ,[ColorCode]                NVARCHAR(100) NULL\n    ,[ClassName]                NVARCHAR(250) NULL\n    ,[ClassCode]                NVARCHAR(100) NULL\n    ,[MSRP]                     NVARCHAR(100) NULL\n    ,[MSRPCurrencyCodeName]     NVARCHAR(250) NULL\n    ,[MSRPCurrencyCodeCode]     NVARCHAR(250) NULL\n)\nWITH\n(\n    DISTRIBUTION = HASH (Code),\n    CLUSTERED COLUMNSTORE INDEX\n)\nGO\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "profiseesqlpool",
+				"poolName": "profiseesqlpool"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

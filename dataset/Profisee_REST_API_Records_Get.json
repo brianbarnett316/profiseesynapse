@@ -1,0 +1,44 @@
+{
+	"name": "Profisee_REST_API_Records_Get",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Profisee REST API",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"entityId": {
+				"type": "string"
+			},
+			"pageSize": {
+				"type": "int",
+				"defaultValue": 1000
+			},
+			"attributes": {
+				"type": "string"
+			},
+			"filter": {
+				"type": "string"
+			},
+			"orderBy": {
+				"type": "string"
+			},
+			"dbaFormat": {
+				"type": "int",
+				"defaultValue": 1
+			},
+			"recordCodes": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "RestResource",
+		"typeProperties": {
+			"relativeUrl": {
+				"value": "@concat(\n'records/',\ndataset().entityId, \n'/?pageSize=', string(dataset().pageSize),\n'&attributes=', dataset().attributes,\n'&filter=', dataset().filter,\n'&orderBy=', dataset().orderBy,\n'&recordCodes=', dataset().recordCodes,\n'&dbaFormat=', string(dataset().dbaFormat)\n)",
+				"type": "Expression"
+			}
+		},
+		"schema": []
+	},
+	"type": "Microsoft.Synapse/workspaces/datasets"
+}

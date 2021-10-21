@@ -1,0 +1,17 @@
+{
+	"name": "Create Sales Table",
+	"properties": {
+		"content": {
+			"query": "--DROP TABLE [dbo].[Sales]\n\nCREATE TABLE [dbo].[Sales]\n(\n    [SalesId] int NOT NULL, -- Shipping Id or Transaction ID\n    [CityLimitsID] NVARCHAR(100) NULL,\n    [TwoWheelsID] NVARCHAR(100) NULL,\n    [Name] NVARCHAR(250) NULL,\n    [Zip] NVARCHAR(100) NULL,\n    [Product] NVARCHAR(100) NULL,\n    [MSRP] DECIMAL(38,2) NULL,\n    [Quantity] int NULL,\n    [Total] DECIMAL(38,2) NULL,\n    [SalesDate] DATE NULL,\n\n    [Shipping Address 1] NVARCHAR(100) NULL,\n    [Shipping City] NVARCHAR(100) NULL,\n    [Shipping State] NVARCHAR(100) NULL,\n    [Shipping Zip] NVARCHAR(100) NULL,\n    [Phone] NVARCHAR(100) NULL\n)\nWITH\n(\n    DISTRIBUTION = HASH (SalesId),\n    CLUSTERED COLUMNSTORE INDEX\n)\nGO\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "profiseesqlpool",
+				"poolName": "profiseesqlpool"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

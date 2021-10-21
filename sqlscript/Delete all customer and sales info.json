@@ -1,0 +1,17 @@
+{
+	"name": "Delete all customer and sales info",
+	"properties": {
+		"content": {
+			"query": "delete from dbo.Sales\ndelete from dbo.Customer",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "profiseesqlpool",
+				"poolName": "profiseesqlpool"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

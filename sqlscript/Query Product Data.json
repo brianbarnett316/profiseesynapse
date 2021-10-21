@@ -1,0 +1,17 @@
+{
+	"name": "Query Product Data",
+	"properties": {
+		"content": {
+			"query": "SELECT\n*\nFROM dbo.Product\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "profiseesqlpool",
+				"poolName": "profiseesqlpool"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

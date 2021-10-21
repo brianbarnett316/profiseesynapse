@@ -1,0 +1,17 @@
+{
+	"name": "Query Golden Customers",
+	"properties": {
+		"content": {
+			"query": "SELECT\n*\nFROM dbo.vGoldenCustomer",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "profiseesqlpool",
+				"poolName": "profiseesqlpool"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

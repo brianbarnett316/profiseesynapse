@@ -1,0 +1,11 @@
+{
+	"name": "ProfiseeKeyVault",
+	"type": "Microsoft.Synapse/workspaces/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureKeyVault",
+		"typeProperties": {
+			"baseUrl": "https://ProfiseeKV.vault.azure.net/"
+		}
+	}
+}

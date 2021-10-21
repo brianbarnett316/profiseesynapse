@@ -1,0 +1,47 @@
+{
+	"name": "SqlPoolShippingTable",
+	"properties": {
+		"annotations": [],
+		"type": "SqlPoolTable",
+		"schema": [
+			{
+				"name": "TransactionId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CustomerId",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Shipping Address 1",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Shipping City",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Shipping State",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Shipping Zip",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Phone",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "Shipping"
+		},
+		"sqlPool": {
+			"referenceName": "profiseesqlpool",
+			"type": "SqlPoolReference"
+		}
+	},
+	"type": "Microsoft.Synapse/workspaces/datasets"
+}

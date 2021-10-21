@@ -1,0 +1,17 @@
+{
+	"name": "Query Sales",
+	"properties": {
+		"content": {
+			"query": "SELECT\n*\nFROM dbo.Sales\n\n\n--DELETE FROM dbo.Sales\n\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "profiseesqlpool",
+				"poolName": "profiseesqlpool"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

@@ -1,0 +1,17 @@
+{
+	"name": "Query Customer",
+	"properties": {
+		"content": {
+			"query": "\nwith cte as (\n    SELECT \n        row_number() over(partition by ID order by LastChgDTM desc) as rowNbr,\n        *\n    FROM dbo.Customer\n)\nSELECT \n    Id, Name, Code, EnterDTM, EnterUserName, LastChgDTM, LastChgUserName, \n    [Address 1], [City], [State], [Zip], [Phone], [Email], [CityLimitsID], [TwoWheelsID], [Source System]    \nFROM cte\nWHERE rowNbr = 1\norder by LastChgDTM desc\n\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "profiseesqlpool",
+				"poolName": "profiseesqlpool"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

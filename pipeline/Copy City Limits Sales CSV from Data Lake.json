@@ -1,0 +1,213 @@
+{
+	"name": "Copy City Limits Sales CSV from Data Lake",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy City Limits Sales CSV from Data Lake",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "SqlPoolSink",
+						"allowCopyCommand": true
+					},
+					"enableStaging": true,
+					"stagingSettings": {
+						"linkedServiceName": {
+							"referenceName": "profiseesynapseworkspace-WorkspaceDefaultStorage",
+							"type": "LinkedServiceReference"
+						},
+						"path": "synapseworkspace/staging"
+					},
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "Shipping Id",
+									"type": "String"
+								},
+								"sink": {
+									"name": "SalesId",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "Customer",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CityLimitsID",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Name",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Name",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Product",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Product",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "MSRP",
+									"type": "String"
+								},
+								"sink": {
+									"name": "MSRP",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "Quantity",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Quantity",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "Total",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Total",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "Date",
+									"type": "String"
+								},
+								"sink": {
+									"name": "SalesDate",
+									"type": "DateTime"
+								}
+							},
+							{
+								"source": {
+									"name": "Shipping Address 1",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Shipping Address 1",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Shipping City",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Shipping City",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Shipping State",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Shipping State",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Shipping Zip",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Shipping Zip",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Phone",
+									"type": "String"
+								},
+								"sink": {
+									"name": "Phone",
+									"type": "String"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "DataLakeCsv",
+						"type": "DatasetReference",
+						"parameters": {
+							"FolderName": {
+								"value": "@pipeline().parameters.FolderName",
+								"type": "Expression"
+							},
+							"FileName": {
+								"value": "@pipeline().parameters.FileName",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "SqlPoolSalesTable",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"parameters": {
+			"FolderName": {
+				"type": "string"
+			},
+			"FileName": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2021-10-19T15:33:37Z"
+	},
+	"type": "Microsoft.Synapse/workspaces/pipelines"
+}

@@ -1,0 +1,78 @@
+{
+	"name": "SqlPoolProductTable",
+	"properties": {
+		"annotations": [],
+		"type": "SqlPoolTable",
+		"schema": [
+			{
+				"name": "Code",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Name",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ProductGroupName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ProductGroupCode",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ProductCategoryCode",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ProductCategoryName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ProductSubCategoryCode",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ProductSubCategoryName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ColorName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ColorCode",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ClassName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ClassCode",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MSRP",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MSRPCurrencyCodeName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "MSRPCurrencyCodeCode",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "Product"
+		},
+		"sqlPool": {
+			"referenceName": "profiseesqlpool",
+			"type": "SqlPoolReference"
+		}
+	},
+	"type": "Microsoft.Synapse/workspaces/datasets"
+}

@@ -1,0 +1,12 @@
+{
+	"name": "Integrated Demo Workspace",
+	"type": "Microsoft.Synapse/workspaces/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "PowerBIWorkspace",
+		"typeProperties": {
+			"workspaceID": "b806fed6-f352-43be-9a09-831acb341b1a",
+			"tenantID": "e4ba15d0-7fe2-4bd4-a3ef-a97a4378231e"
+		}
+	}
+}

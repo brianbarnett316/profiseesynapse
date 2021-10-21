@@ -1,0 +1,17 @@
+{
+	"name": "Query City Limits Customers",
+	"properties": {
+		"content": {
+			"query": "SELECT\n*\nFROM dbo.vCityLimitsCustomer\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "profiseesqlpool",
+				"poolName": "profiseesqlpool"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

@@ -1,0 +1,17 @@
+{
+	"name": "Create Customer Table",
+	"properties": {
+		"content": {
+			"query": "-- DROP TABLE [dbo].[Customer]\n\nCREATE TABLE [dbo].[Customer]\n(\n\t [Id]                    int NOT NULL\n\t,[Name]                  [nvarchar](250) NULL\n\t,[Code]                  [nvarchar](250) NOT NULL\n\t,[EnterDTM]              [datetime2](3) NOT NULL\n\t,[EnterUserName]         [nvarchar](250) NOT NULL\n\t,[LastChgDTM]            [datetime2](3) NOT NULL\n\t,[LastChgUserName]       [nvarchar](250) NOT NULL\n\n    ,[Customer Type]         NVARCHAR(250) NULL\n    ,[Industry]              NVARCHAR(250) NULL\n    ,[Address 1]             NVARCHAR(255) NULL\n    ,[City]                  NVARCHAR(255) NULL\n    ,[State]                 NVARCHAR(100) NULL\n    ,[Zip]                   NVARCHAR(100) NULL\n    ,[Phone]                 NVARCHAR(100) NULL\n    ,[Email]                 NVARCHAR(100) NULL\n    ,[Region]                NVARCHAR(250) NULL\n    ,[CityLimitsID]          NVARCHAR(100) NULL\n    ,[TwoWheelsID]           NVARCHAR(100) NULL\n    ,[Source System]         NVARCHAR(250) NULL\n    ,[Record Source]         NVARCHAR(250) NULL\n    ,[Match Cluster]         NVARCHAR(250) NULL\n    ,[Match Status]          NVARCHAR(250) NULL\n    ,[Golden Record]         NVARCHAR(250) NULL\n\n)\nWITH\n(\n    DISTRIBUTION = HASH (Id),\n    CLUSTERED COLUMNSTORE INDEX\n)\nGO\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "profiseesqlpool",
+				"poolName": "profiseesqlpool"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
