@@ -1,0 +1,2072 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"workspaceName": {
+			"type": "string",
+			"metadata": "Workspace name",
+			"defaultValue": "profiseesynapseworkspace"
+		},
+		"ProfiseeDataLakeStorage_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'ProfiseeDataLakeStorage'"
+		},
+		"profiseesynapseworkspace-WorkspaceDefaultSqlServer_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'profiseesynapseworkspace-WorkspaceDefaultSqlServer'"
+		},
+		"Profisee REST API_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://profvm3wklyweb.profisee.biz/profisee21r3/rest/v1"
+		},
+		"ProfiseeDataLakeStorage_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://profiseedatalake.dfs.core.windows.net"
+		},
+		"ProfiseeKeyVault_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://ProfiseeKV.vault.azure.net/"
+		},
+		"profiseesynapseworkspace-WorkspaceDefaultStorage_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://profiseedatalake.dfs.core.windows.net"
+		},
+		"5MinuteTumbleTrigger_properties_pipeline_parameters_StartTime": {
+			"type": "string",
+			"defaultValue": "@trigger().outputs.windowStartTime"
+		},
+		"5MinuteTumbleTrigger_properties_pipeline_parameters_EndTime": {
+			"type": "string",
+			"defaultValue": "@trigger().outputs.windowEndTime"
+		},
+		"NewCityLimitsSalesCsv_properties_Copy City Limits Sales CSV from Data Lake_parameters_FolderName": {
+			"type": "string",
+			"defaultValue": "@triggerBody().FolderPath"
+		},
+		"NewCityLimitsSalesCsv_properties_Copy City Limits Sales CSV from Data Lake_parameters_FileName": {
+			"type": "string",
+			"defaultValue": "@triggerBody().FileName"
+		},
+		"NewCityLimitsSalesCsv_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/eace1b14-b39d-4d89-b619-ef42f13617cb/resourceGroups/EUS2-PurviewResources/providers/Microsoft.Storage/storageAccounts/profiseedatalake"
+		},
+		"NewSalesCsv_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/eace1b14-b39d-4d89-b619-ef42f13617cb/resourceGroups/EUS2-PurviewResources/providers/Microsoft.Storage/storageAccounts/profiseedatalake"
+		},
+		"NewShippingCsv_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/eace1b14-b39d-4d89-b619-ef42f13617cb/resourceGroups/EUS2-PurviewResources/providers/Microsoft.Storage/storageAccounts/profiseedatalake"
+		},
+		"NewTwoWheelsSalesCsv_properties_Copy Two Wheels Sales CSV from Data Lake_parameters_FolderName": {
+			"type": "string",
+			"defaultValue": "@triggerBody().FolderPath"
+		},
+		"NewTwoWheelsSalesCsv_properties_Copy Two Wheels Sales CSV from Data Lake_parameters_FileName": {
+			"type": "string",
+			"defaultValue": "@triggerBody().FileName"
+		},
+		"NewTwoWheelsSalesCsv_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/eace1b14-b39d-4d89-b619-ef42f13617cb/resourceGroups/EUS2-PurviewResources/providers/Microsoft.Storage/storageAccounts/profiseedatalake"
+		}
+	},
+	"variables": {
+		"workspaceId": "[concat('Microsoft.Synapse/workspaces/', parameters('workspaceName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('workspaceName'), '/Copy City Limits Sales CSV from Data Lake')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy City Limits Sales CSV from Data Lake",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "SqlPoolSink",
+								"allowCopyCommand": true,
+								"copyCommandSettings": {}
+							},
+							"enableStaging": true,
+							"stagingSettings": {
+								"linkedServiceName": {
+									"referenceName": "profiseesynapseworkspace-WorkspaceDefaultStorage",
+									"type": "LinkedServiceReference"
+								},
+								"path": "synapseworkspace/staging"
+							},
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "Shipping Id",
+											"type": "String"
+										},
+										"sink": {
+											"name": "SalesId",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "Customer",
+											"type": "String"
+										},
+										"sink": {
+											"name": "CityLimitsID",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Name",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Name",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Product",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Product",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "MSRP",
+											"type": "String"
+										},
+										"sink": {
+											"name": "MSRP",
+											"type": "Decimal"
+										}
+									},
+									{
+										"source": {
+											"name": "Quantity",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Quantity",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "Total",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Total",
+											"type": "Decimal"
+										}
+									},
+									{
+										"source": {
+											"name": "Date",
+											"type": "String"
+										},
+										"sink": {
+											"name": "SalesDate",
+											"type": "DateTime"
+										}
+									},
+									{
+										"source": {
+											"name": "Shipping Address 1",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Shipping Address 1",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Shipping City",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Shipping City",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Shipping State",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Shipping State",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Shipping Zip",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Shipping Zip",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Phone",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Phone",
+											"type": "String"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "DataLakeCsv",
+								"type": "DatasetReference",
+								"parameters": {
+									"FolderName": {
+										"value": "@pipeline().parameters.FolderName",
+										"type": "Expression"
+									},
+									"FileName": {
+										"value": "@pipeline().parameters.FileName",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SqlPoolSalesTable",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"parameters": {
+					"FolderName": {
+						"type": "string"
+					},
+					"FileName": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2021-10-19T15:33:37Z"
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/DataLakeCsv')]",
+				"[concat(variables('workspaceId'), '/datasets/SqlPoolSalesTable')]",
+				"[concat(variables('workspaceId'), '/linkedServices/profiseesynapseworkspace-WorkspaceDefaultStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Copy Product Data CSV from Data Lake')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy Product Data CSV from Data Lake",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "SqlPoolSink",
+								"allowCopyCommand": true,
+								"copyCommandSettings": {}
+							},
+							"enableStaging": true,
+							"stagingSettings": {
+								"linkedServiceName": {
+									"referenceName": "profiseesynapseworkspace-WorkspaceDefaultStorage",
+									"type": "LinkedServiceReference"
+								},
+								"path": "synapseworkspace/staging"
+							},
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "Code",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Code",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Name",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Name",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "ProductGroupName",
+											"type": "String"
+										},
+										"sink": {
+											"name": "ProductGroupName",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "ProductGroupCode",
+											"type": "String"
+										},
+										"sink": {
+											"name": "ProductGroupCode",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "ProductCategoryCode",
+											"type": "String"
+										},
+										"sink": {
+											"name": "ProductCategoryCode",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "ProductCategoryName",
+											"type": "String"
+										},
+										"sink": {
+											"name": "ProductCategoryName",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "ProductSubCategoryCode",
+											"type": "String"
+										},
+										"sink": {
+											"name": "ProductSubCategoryCode",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "ProductSubCategoryName",
+											"type": "String"
+										},
+										"sink": {
+											"name": "ProductSubCategoryName",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "ColorName",
+											"type": "String"
+										},
+										"sink": {
+											"name": "ColorName",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "ColorCode",
+											"type": "String"
+										},
+										"sink": {
+											"name": "ColorCode",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "ClassName",
+											"type": "String"
+										},
+										"sink": {
+											"name": "ClassName",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "ClassCode",
+											"type": "String"
+										},
+										"sink": {
+											"name": "ClassCode",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "MSRP",
+											"type": "String"
+										},
+										"sink": {
+											"name": "MSRP",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "MSRPCurrencyCodeName",
+											"type": "String"
+										},
+										"sink": {
+											"name": "MSRPCurrencyCodeName",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "MSRPCurrencyCodeCode",
+											"type": "String"
+										},
+										"sink": {
+											"name": "MSRPCurrencyCodeCode",
+											"type": "String"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "DataLakeCsv",
+								"type": "DatasetReference",
+								"parameters": {
+									"FolderName": {
+										"value": "@pipeline().parameters.FolderName",
+										"type": "Expression"
+									},
+									"FileName": {
+										"value": "@pipeline().parameters.FileName",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SqlPoolProductTable",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"parameters": {
+					"FolderName": {
+						"type": "string"
+					},
+					"FileName": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2021-10-19T16:21:07Z"
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/DataLakeCsv')]",
+				"[concat(variables('workspaceId'), '/datasets/SqlPoolProductTable')]",
+				"[concat(variables('workspaceId'), '/linkedServices/profiseesynapseworkspace-WorkspaceDefaultStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Copy Two Wheels Sales CSV from Data Lake')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy Two Wheels Sales CSV from Data Lake",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "SqlPoolSink",
+								"allowCopyCommand": true,
+								"copyCommandSettings": {}
+							},
+							"enableStaging": true,
+							"stagingSettings": {
+								"linkedServiceName": {
+									"referenceName": "profiseesynapseworkspace-WorkspaceDefaultStorage",
+									"type": "LinkedServiceReference"
+								},
+								"path": "synapseworkspace/staging"
+							},
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "Transaction ID",
+											"type": "String"
+										},
+										"sink": {
+											"name": "SalesId",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "Customer",
+											"type": "String"
+										},
+										"sink": {
+											"name": "TwoWheelsID",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Name",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Name",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Zip",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Zip",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Product",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Product",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "MSRP",
+											"type": "String"
+										},
+										"sink": {
+											"name": "MSRP",
+											"type": "Decimal"
+										}
+									},
+									{
+										"source": {
+											"name": "Quantity",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Quantity",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "Total",
+											"type": "String"
+										},
+										"sink": {
+											"name": "Total",
+											"type": "Decimal"
+										}
+									},
+									{
+										"source": {
+											"name": "Date",
+											"type": "String"
+										},
+										"sink": {
+											"name": "SalesDate",
+											"type": "DateTime"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "DataLakeCsv",
+								"type": "DatasetReference",
+								"parameters": {
+									"FolderName": {
+										"value": "@pipeline().parameters.FolderName",
+										"type": "Expression"
+									},
+									"FileName": {
+										"value": "@pipeline().parameters.FileName",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SqlPoolSalesTable",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"parameters": {
+					"FolderName": {
+						"type": "string"
+					},
+					"FileName": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2021-10-19T15:33:22Z"
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/DataLakeCsv')]",
+				"[concat(variables('workspaceId'), '/datasets/SqlPoolSalesTable')]",
+				"[concat(variables('workspaceId'), '/linkedServices/profiseesynapseworkspace-WorkspaceDefaultStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Transfer latest Customers from Profisee')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "Transfer latest Customer records from Profisee",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "RestSource",
+								"httpRequestTimeout": "00:01:40",
+								"requestInterval": "00.00:00:00.010",
+								"requestMethod": "GET",
+								"paginationRules": {
+									"AbsoluteUrl": "$.nextPage"
+								}
+							},
+							"sink": {
+								"type": "SqlPoolSink",
+								"allowCopyCommand": true,
+								"copyCommandSettings": {}
+							},
+							"enableStaging": true,
+							"stagingSettings": {
+								"linkedServiceName": {
+									"referenceName": "profiseesynapseworkspace-WorkspaceDefaultStorage",
+									"type": "LinkedServiceReference"
+								},
+								"path": "synapseworkspace/staging"
+							},
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "['internalId']"
+										},
+										"sink": {
+											"name": "Id",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"path": "['code']"
+										},
+										"sink": {
+											"name": "Code",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "['name']"
+										},
+										"sink": {
+											"name": "Name",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "['source System']"
+										},
+										"sink": {
+											"name": "Source System",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "['customerType']"
+										},
+										"sink": {
+											"name": "Customer Type",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "['industry']"
+										},
+										"sink": {
+											"name": "Industry",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "['address Line 1']"
+										},
+										"sink": {
+											"name": "Address 1",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "['city']"
+										},
+										"sink": {
+											"name": "City",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "['state']"
+										},
+										"sink": {
+											"name": "State",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "['zip']"
+										},
+										"sink": {
+											"name": "Zip",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "['phone Number']"
+										},
+										"sink": {
+											"name": "Phone",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "['email Address']"
+										},
+										"sink": {
+											"name": "Email",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "['region']"
+										},
+										"sink": {
+											"name": "Region",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "['cityLimitsID']"
+										},
+										"sink": {
+											"name": "CityLimitsID"
+										}
+									},
+									{
+										"source": {
+											"path": "['twoWheelsID']"
+										},
+										"sink": {
+											"name": "TwoWheelsID"
+										}
+									},
+									{
+										"source": {
+											"path": "['record Source']"
+										},
+										"sink": {
+											"name": "Record Source",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "['match Cluster']"
+										},
+										"sink": {
+											"name": "Match Cluster",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "['match Status']"
+										},
+										"sink": {
+											"name": "Match Status",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "['golden Record']"
+										},
+										"sink": {
+											"name": "Golden Record",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "['enterDTM']"
+										},
+										"sink": {
+											"name": "EnterDTM",
+											"type": "DateTime"
+										}
+									},
+									{
+										"source": {
+											"path": "['enterUserName']"
+										},
+										"sink": {
+											"name": "EnterUserName",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "['lastChgDTM']"
+										},
+										"sink": {
+											"name": "LastChgDTM",
+											"type": "DateTime"
+										}
+									},
+									{
+										"source": {
+											"path": "['lastChgUserName']"
+										},
+										"sink": {
+											"name": "LastChgUserName",
+											"type": "String"
+										}
+									}
+								],
+								"collectionReference": "$['data']"
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "Profisee_REST_API_Records_Get",
+								"type": "DatasetReference",
+								"parameters": {
+									"entityId": "Customer",
+									"pageSize": 1000,
+									"attributes": "[Source System],[CustomerType],[Industry],[Address Line 1],[City],[State],[Zip],[Phone Number],[Email Address],[Region],[CityLimitsID],[TwoWheelsID],[Record Source],[Match Cluster],[Match Status],[Golden Record]",
+									"filter": {
+										"value": "@concat('[lastChgDTM] gt ', replace(pipeline().parameters.StartTime, 'Z', ''), ' AND [lastChgDTM] le ', replace(pipeline().parameters.EndTime, 'Z', ''))",
+										"type": "Expression"
+									},
+									"orderBy": " ",
+									"dbaFormat": 1,
+									"recordCodes": " "
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SqlPoolCustomerTable",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"parameters": {
+					"StartTime": {
+						"type": "string"
+					},
+					"EndTime": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2021-10-19T14:34:10Z"
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/Profisee_REST_API_Records_Get')]",
+				"[concat(variables('workspaceId'), '/datasets/SqlPoolCustomerTable')]",
+				"[concat(variables('workspaceId'), '/linkedServices/profiseesynapseworkspace-WorkspaceDefaultStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/DataLakeCsv')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ProfiseeDataLakeStorage",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"FolderName": {
+						"type": "string"
+					},
+					"FileName": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@dataset().FileName",
+							"type": "Expression"
+						},
+						"fileSystem": {
+							"value": "@dataset().FolderName",
+							"type": "Expression"
+						}
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/ProfiseeDataLakeStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Profisee_REST_API_Records_Get')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "Profisee REST API",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"entityId": {
+						"type": "string"
+					},
+					"pageSize": {
+						"type": "int",
+						"defaultValue": 1000
+					},
+					"attributes": {
+						"type": "string"
+					},
+					"filter": {
+						"type": "string"
+					},
+					"orderBy": {
+						"type": "string"
+					},
+					"dbaFormat": {
+						"type": "int",
+						"defaultValue": 1
+					},
+					"recordCodes": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "RestResource",
+				"typeProperties": {
+					"relativeUrl": {
+						"value": "@concat(\n'records/',\ndataset().entityId, \n'/?pageSize=', string(dataset().pageSize),\n'&attributes=', dataset().attributes,\n'&filter=', dataset().filter,\n'&orderBy=', dataset().orderBy,\n'&recordCodes=', dataset().recordCodes,\n'&dbaFormat=', string(dataset().dbaFormat)\n)",
+						"type": "Expression"
+					}
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/Profisee REST API')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SqlPoolCustomerTable')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "SqlPoolTable",
+				"schema": [
+					{
+						"name": "Id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Name",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Code",
+						"type": "nvarchar"
+					},
+					{
+						"name": "EnterDTM",
+						"type": "datetime2",
+						"scale": 3
+					},
+					{
+						"name": "EnterUserName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "LastChgDTM",
+						"type": "datetime2",
+						"scale": 3
+					},
+					{
+						"name": "LastChgUserName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Address 1",
+						"type": "nvarchar"
+					},
+					{
+						"name": "City",
+						"type": "nvarchar"
+					},
+					{
+						"name": "State",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Zip",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Phone",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Email",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CustomerSalesId",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CustomerShippingId",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "Customer"
+				},
+				"sqlPool": {
+					"referenceName": "profiseesqlpool",
+					"type": "SqlPoolReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/sqlPools/profiseesqlpool')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SqlPoolProductTable')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "SqlPoolTable",
+				"schema": [
+					{
+						"name": "Code",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Name",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ProductGroupName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ProductGroupCode",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ProductCategoryCode",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ProductCategoryName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ProductSubCategoryCode",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ProductSubCategoryName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ColorName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ColorCode",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ClassName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ClassCode",
+						"type": "nvarchar"
+					},
+					{
+						"name": "MSRP",
+						"type": "nvarchar"
+					},
+					{
+						"name": "MSRPCurrencyCodeName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "MSRPCurrencyCodeCode",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "Product"
+				},
+				"sqlPool": {
+					"referenceName": "profiseesqlpool",
+					"type": "SqlPoolReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/sqlPools/profiseesqlpool')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SqlPoolSalesTable')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "SqlPoolTable",
+				"schema": [
+					{
+						"name": "TransactionId",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "CustomerId",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Name",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Zip",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Product",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Quantity",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Total",
+						"type": "decimal",
+						"precision": 38,
+						"scale": 2
+					},
+					{
+						"name": "Discount Applied",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Percent Discount",
+						"type": "decimal",
+						"precision": 36,
+						"scale": 2
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "Sales"
+				},
+				"sqlPool": {
+					"referenceName": "profiseesqlpool",
+					"type": "SqlPoolReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/sqlPools/profiseesqlpool')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SqlPoolShippingTable')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "SqlPoolTable",
+				"schema": [
+					{
+						"name": "TransactionId",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "CustomerId",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Shipping Address 1",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Shipping City",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Shipping State",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Shipping Zip",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Phone",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "Shipping"
+				},
+				"sqlPool": {
+					"referenceName": "profiseesqlpool",
+					"type": "SqlPoolReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/sqlPools/profiseesqlpool')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Integrated Demo Workspace')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "PowerBIWorkspace",
+				"typeProperties": {
+					"workspaceID": "b806fed6-f352-43be-9a09-831acb341b1a",
+					"tenantID": "e4ba15d0-7fe2-4bd4-a3ef-a97a4378231e"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/PowerBIWorkspace1')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "PowerBIWorkspace",
+				"typeProperties": {
+					"workspaceID": "63e664f8-480f-4d12-a261-008c5a3a5eee",
+					"tenantID": "e4ba15d0-7fe2-4bd4-a3ef-a97a4378231e"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Profisee REST API')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "RestService",
+				"typeProperties": {
+					"url": "[parameters('Profisee REST API_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Anonymous",
+					"authHeaders": {
+						"X-API-Key": {
+							"type": "AzureKeyVaultSecret",
+							"store": {
+								"referenceName": "ProfiseeKeyVault",
+								"type": "LinkedServiceReference"
+							},
+							"secretName": "profisee-rest-api-key"
+						}
+					}
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]",
+				"[concat(variables('workspaceId'), '/linkedServices/ProfiseeKeyVault')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/ProfiseeDataLakeStorage')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('ProfiseeDataLakeStorage_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('ProfiseeDataLakeStorage_accountKey')]"
+					}
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/ProfiseeKeyVault')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureKeyVault",
+				"typeProperties": {
+					"baseUrl": "[parameters('ProfiseeKeyVault_properties_typeProperties_baseUrl')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/profiseesynapseworkspace-WorkspaceDefaultSqlServer')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"parameters": {
+					"DBName": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlDW",
+				"typeProperties": {
+					"connectionString": "[parameters('profiseesynapseworkspace-WorkspaceDefaultSqlServer_connectionString')]"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/profiseesynapseworkspace-WorkspaceDefaultStorage')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('profiseesynapseworkspace-WorkspaceDefaultStorage_properties_typeProperties_url')]"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/5MinuteTumbleTrigger')]",
+			"type": "Microsoft.Synapse/workspaces/triggers",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipeline": {
+					"pipelineReference": {
+						"referenceName": "Transfer latest Customers from Profisee",
+						"type": "PipelineReference"
+					},
+					"parameters": {
+						"StartTime": "[parameters('5MinuteTumbleTrigger_properties_pipeline_parameters_StartTime')]",
+						"EndTime": "[parameters('5MinuteTumbleTrigger_properties_pipeline_parameters_EndTime')]"
+					}
+				},
+				"type": "TumblingWindowTrigger",
+				"typeProperties": {
+					"frequency": "Minute",
+					"interval": 5,
+					"startTime": "2021-10-11T15:30:00Z",
+					"delay": "00:00:00",
+					"maxConcurrency": 50,
+					"retryPolicy": {
+						"intervalInSeconds": 30
+					},
+					"dependsOn": []
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/pipelines/Transfer latest Customers from Profisee')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/NewCityLimitsSalesCsv')]",
+			"type": "Microsoft.Synapse/workspaces/triggers",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "Copy City Limits Sales CSV from Data Lake",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"FolderName": "[parameters('NewCityLimitsSalesCsv_properties_Copy City Limits Sales CSV from Data Lake_parameters_FolderName')]",
+							"FileName": "[parameters('NewCityLimitsSalesCsv_properties_Copy City Limits Sales CSV from Data Lake_parameters_FileName')]"
+						}
+					}
+				],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/city-limits/blobs/",
+					"blobPathEndsWith": ".csv",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('NewCityLimitsSalesCsv_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/pipelines/Copy City Limits Sales CSV from Data Lake')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/NewSalesCsv')]",
+			"type": "Microsoft.Synapse/workspaces/triggers",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/transactions/blobs/sales",
+					"blobPathEndsWith": ".csv",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('NewSalesCsv_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/NewShippingCsv')]",
+			"type": "Microsoft.Synapse/workspaces/triggers",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/transactions/blobs/shipping",
+					"blobPathEndsWith": ".csv",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('NewShippingCsv_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/NewTwoWheelsSalesCsv')]",
+			"type": "Microsoft.Synapse/workspaces/triggers",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "Copy Two Wheels Sales CSV from Data Lake",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"FolderName": "[parameters('NewTwoWheelsSalesCsv_properties_Copy Two Wheels Sales CSV from Data Lake_parameters_FolderName')]",
+							"FileName": "[parameters('NewTwoWheelsSalesCsv_properties_Copy Two Wheels Sales CSV from Data Lake_parameters_FileName')]"
+						}
+					}
+				],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/two-wheels/blobs/",
+					"blobPathEndsWith": ".csv",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('NewTwoWheelsSalesCsv_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/pipelines/Copy Two Wheels Sales CSV from Data Lake')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/AutoResolveIntegrationRuntime')]",
+			"type": "Microsoft.Synapse/workspaces/integrationRuntimes",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "Managed",
+				"typeProperties": {
+					"computeProperties": {
+						"location": "AutoResolve",
+						"dataFlowProperties": {
+							"computeType": "General",
+							"coreCount": 8,
+							"timeToLive": 0
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/WorkspaceSystemIdentity')]",
+			"type": "Microsoft.Synapse/workspaces/credentials",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "ManagedIdentity",
+				"typeProperties": {}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Create Customer Table')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "-- DROP TABLE [dbo].[Customer]\n\nCREATE TABLE [dbo].[Customer]\n(\n\t [Id]                    int NOT NULL\n\t,[Name]                  [nvarchar](250) NULL\n\t,[Code]                  [nvarchar](250) NOT NULL\n\t,[EnterDTM]              [datetime2](3) NOT NULL\n\t,[EnterUserName]         [nvarchar](250) NOT NULL\n\t,[LastChgDTM]            [datetime2](3) NOT NULL\n\t,[LastChgUserName]       [nvarchar](250) NOT NULL\n\n    ,[Customer Type]         NVARCHAR(250) NULL\n    ,[Industry]              NVARCHAR(250) NULL\n    ,[Address 1]             NVARCHAR(255) NULL\n    ,[City]                  NVARCHAR(255) NULL\n    ,[State]                 NVARCHAR(100) NULL\n    ,[Zip]                   NVARCHAR(100) NULL\n    ,[Phone]                 NVARCHAR(100) NULL\n    ,[Email]                 NVARCHAR(100) NULL\n    ,[Region]                NVARCHAR(250) NULL\n    ,[CityLimitsID]          NVARCHAR(100) NULL\n    ,[TwoWheelsID]           NVARCHAR(100) NULL\n    ,[Source System]         NVARCHAR(250) NULL\n    ,[Record Source]         NVARCHAR(250) NULL\n    ,[Match Cluster]         NVARCHAR(250) NULL\n    ,[Match Status]          NVARCHAR(250) NULL\n    ,[Golden Record]         NVARCHAR(250) NULL\n\n)\nWITH\n(\n    DISTRIBUTION = HASH (Id),\n    CLUSTERED COLUMNSTORE INDEX\n)\nGO\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "profiseesqlpool",
+						"poolName": "profiseesqlpool"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Create Product Table')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "--DROP TABLE [dbo].[Product] \n\nCREATE TABLE [dbo].[Product]\n(\n\t [Code]                     NVARCHAR(250) NOT NULL\n\t,[Name]                     NVARCHAR(250) NULL\n\t--,[EnterDTM]              [datetime2](3) NOT NULL\n\t--,[EnterUserName]         [nvarchar](250) NOT NULL\n\t--,[LastChgDTM]            [datetime2](3) NOT NULL\n\t--,[LastChgUserName]       [nvarchar](250) NOT NULL\n\n    ,[ProductGroupName]         NVARCHAR(250) NULL\n    ,[ProductGroupCode]         NVARCHAR(250) NULL\n    ,[ProductCategoryCode]      NVARCHAR(255) NULL\n    ,[ProductCategoryName]      NVARCHAR(255) NULL\n    ,[ProductSubCategoryCode]   NVARCHAR(100) NULL\n    ,[ProductSubCategoryName]   NVARCHAR(100) NULL\n    ,[ColorName]                NVARCHAR(100) NULL\n    ,[ColorCode]                NVARCHAR(100) NULL\n    ,[ClassName]                NVARCHAR(250) NULL\n    ,[ClassCode]                NVARCHAR(100) NULL\n    ,[MSRP]                     NVARCHAR(100) NULL\n    ,[MSRPCurrencyCodeName]     NVARCHAR(250) NULL\n    ,[MSRPCurrencyCodeCode]     NVARCHAR(250) NULL\n)\nWITH\n(\n    DISTRIBUTION = HASH (Code),\n    CLUSTERED COLUMNSTORE INDEX\n)\nGO\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "profiseesqlpool",
+						"poolName": "profiseesqlpool"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Create Sales Table')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "--DROP TABLE [dbo].[Sales]\n\nCREATE TABLE [dbo].[Sales]\n(\n    [SalesId] int NOT NULL, -- Shipping Id or Transaction ID\n    [CityLimitsID] NVARCHAR(100) NULL,\n    [TwoWheelsID] NVARCHAR(100) NULL,\n    [Name] NVARCHAR(250) NULL,\n    [Zip] NVARCHAR(100) NULL,\n    [Product] NVARCHAR(100) NULL,\n    [MSRP] DECIMAL(38,2) NULL,\n    [Quantity] int NULL,\n    [Total] DECIMAL(38,2) NULL,\n    [SalesDate] DATE NULL,\n\n    [Shipping Address 1] NVARCHAR(100) NULL,\n    [Shipping City] NVARCHAR(100) NULL,\n    [Shipping State] NVARCHAR(100) NULL,\n    [Shipping Zip] NVARCHAR(100) NULL,\n    [Phone] NVARCHAR(100) NULL\n)\nWITH\n(\n    DISTRIBUTION = HASH (SalesId),\n    CLUSTERED COLUMNSTORE INDEX\n)\nGO\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "profiseesqlpool",
+						"poolName": "profiseesqlpool"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Create Shipping Table')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "--DROP TABLE [dbo].[Shipping]\n\nCREATE TABLE [dbo].[Shipping]\n(\n    [ShippingId] int NOT NULL,\n    [CustomerId] NVARCHAR(100) NOT NULL,\n    [Shipping Address 1] NVARCHAR(100) NULL,\n    [Shipping City] NVARCHAR(100) NULL,\n    [Shipping State] NVARCHAR(100) NULL,\n    [Shipping Zip] NVARCHAR(100) NULL,\n    [Phone] NVARCHAR(100) NULL\n)\nWITH\n(\n    DISTRIBUTION = HASH (ShippingId),\n    CLUSTERED COLUMNSTORE INDEX\n)\nGO\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "profiseesqlpool",
+						"poolName": "profiseesqlpool"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Create vCityLimitsCustomer view')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "DROP VIEW [dbo].[vCityLimitsCustomer]\nGO\n\nSET ANSI_NULLS ON\nGO\nSET QUOTED_IDENTIFIER ON\nGO\n\nCREATE VIEW [dbo].[vCityLimitsCustomer]\nAS with cte as (\n    SELECT \n        row_number() over(partition by ID order by LastChgDTM desc) as rowNbr,\n        *\n    FROM dbo.Customer\n)\nSELECT \n     [Id]                \n    ,[Name]              \n    ,[Code]              \n    ,[EnterDTM]          \n    ,[EnterUserName]     \n    ,[LastChgDTM]        \n    ,[LastChgUserName]   \n    ,[Source System]     \n    ,[Customer Type]     \n    ,[Industry]          \n    ,[Address 1]         \n    ,[City]              \n    ,[State]             \n    ,[Zip]               \n    ,[Phone]             \n    ,[Email]             \n    ,[Region]            \n    ,[CityLimitsID]   \n    ,[Record Source]     \n    ,[Match Cluster]     \n    ,[Match Status]      \n    ,[Golden Record]     \nFROM cte\nWHERE rowNbr = 1 AND CityLimitsID IS NOT NULL;\nGO",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "profiseesqlpool",
+						"poolName": "profiseesqlpool"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Create vCustomer View')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "-- DROP VIEW [dbo].[vCustomer]\n\nCREATE VIEW [dbo].vCustomer\n\tAS \n\nwith cte as (\n    SELECT \n        row_number() over(partition by ID order by LastChgDTM desc) as rowNbr,\n        *\n    FROM dbo.Customer\n)\nSELECT \n     [Id]                \n    ,[Name]              \n    ,[Code]              \n    ,[EnterDTM]          \n    ,[EnterUserName]     \n    ,[LastChgDTM]        \n    ,[LastChgUserName]   \n    ,[Source System]     \n    ,[Customer Type]     \n    ,[Industry]          \n    ,[Address 1]         \n    ,[City]              \n    ,[State]             \n    ,[Zip]               \n    ,[Phone]             \n    ,[Email]             \n    ,[Region]            \n    ,[CityLimitsID]   \n    ,[TwoWheelsID]\n    ,[Record Source]     \n    ,[Match Cluster]     \n    ,[Match Status]      \n    ,[Golden Record]     \nFROM cte\nWHERE rowNbr = 1\n\n\n\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "profiseesqlpool",
+						"poolName": "profiseesqlpool"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Create vGoldenCustomer view')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "DROP VIEW [dbo].[vGoldenCustomer]\nGO\n\nSET ANSI_NULLS ON\nGO\nSET QUOTED_IDENTIFIER ON\nGO\n\nCREATE VIEW [dbo].[vGoldenCustomer]\nAS with cte as (\n    SELECT \n        row_number() over(partition by ID order by LastChgDTM desc) as rowNbr,\n        *\n    FROM dbo.Customer\n)\nSELECT \n     [Id]                \n    ,[Name]              \n    ,[Code]              \n    ,[EnterDTM]          \n    ,[EnterUserName]     \n    ,[LastChgDTM]        \n    ,[LastChgUserName]   \n    ,[Customer Type]     \n    ,[Industry]          \n    ,[Address 1]         \n    ,[City]              \n    ,[State]             \n    ,[Zip]               \n    ,[Phone]             \n    ,[Email]             \n    ,[Region]\n    ,[Record Source]              \n    ,[Match Cluster]         \nFROM cte\nWHERE rowNbr = 1 AND [Match Status] = 10;\nGO",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "profiseesqlpool",
+						"poolName": "profiseesqlpool"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Create vTwoWheelsCustomer view')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "DROP VIEW [dbo].[vTwoWheelsCustomer]\nGO\n\nSET ANSI_NULLS ON\nGO\nSET QUOTED_IDENTIFIER ON\nGO\n\nCREATE VIEW [dbo].[vTwoWheelsCustomer]\nAS with cte as (\n    SELECT \n        row_number() over(partition by ID order by LastChgDTM desc) as rowNbr,\n        *\n    FROM dbo.Customer\n)\nSELECT \n     [Id]                \n    ,[Name]              \n    ,[Code]              \n    ,[EnterDTM]          \n    ,[EnterUserName]     \n    ,[LastChgDTM]        \n    ,[LastChgUserName]   \n    ,[Source System]     \n    ,[Customer Type]     \n    ,[Industry]          \n    ,[Address 1]         \n    ,[City]              \n    ,[State]             \n    ,[Zip]               \n    ,[Phone]             \n    ,[Email]             \n    ,[Region]            \n    ,[TwoWheelsID]\n    ,[Record Source]     \n    ,[Match Cluster]     \n    ,[Match Status]      \n    ,[Golden Record]     \nFROM cte\nWHERE rowNbr = 1 AND TwoWheelsID IS NOT NULL;\nGO",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "profiseesqlpool",
+						"poolName": "profiseesqlpool"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Delete all customer and sales info')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "delete from dbo.Sales\ndelete from dbo.Customer",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "profiseesqlpool",
+						"poolName": "profiseesqlpool"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Delete all product data')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "delete from dbo.Product",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "profiseesqlpool",
+						"poolName": "profiseesqlpool"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Query City Limits Customers')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "SELECT\n*\nFROM dbo.vCityLimitsCustomer\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "profiseesqlpool",
+						"poolName": "profiseesqlpool"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Query Customer View')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "SELECT *\nFROM dbo.vCustomer\nORDER by LastChgDTM desc\n\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "profiseesqlpool",
+						"poolName": "profiseesqlpool"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Query Customer')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "\nwith cte as (\n    SELECT \n        row_number() over(partition by ID order by LastChgDTM desc) as rowNbr,\n        *\n    FROM dbo.Customer\n)\nSELECT \n    Id, Name, Code, EnterDTM, EnterUserName, LastChgDTM, LastChgUserName, \n    [Address 1], [City], [State], [Zip], [Phone], [Email], [CityLimitsID], [TwoWheelsID], [Source System]    \nFROM cte\nWHERE rowNbr = 1\norder by LastChgDTM desc\n\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "profiseesqlpool",
+						"poolName": "profiseesqlpool"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Query Golden Customers')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "SELECT\n*\nFROM dbo.vGoldenCustomer",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "profiseesqlpool",
+						"poolName": "profiseesqlpool"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Query Product Data')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "SELECT\n*\nFROM dbo.Product\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "profiseesqlpool",
+						"poolName": "profiseesqlpool"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Query Sales')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "SELECT\n*\nFROM dbo.Sales\n\n\n--DELETE FROM dbo.Sales\n\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "profiseesqlpool",
+						"poolName": "profiseesqlpool"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Query Two Wheels Customers')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "SELECT\n*\nFROM dbo.vTwoWheelsCustomer\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "profiseesqlpool",
+						"poolName": "profiseesqlpool"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/profiseesqlpool')]",
+			"type": "Microsoft.Synapse/workspaces/sqlPools",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"collation": "SQL_Latin1_General_CP1_CI_AS",
+				"maxSizeBytes": 263882790666240,
+				"annotations": []
+			},
+			"dependsOn": [],
+			"location": "eastus2"
+		}
+	]
+}

@@ -1,0 +1,57 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"workspaceName": {
+			"value": "profiseesynapseworkspace"
+		},
+		"ProfiseeDataLakeStorage_accountKey": {
+			"value": ""
+		},
+		"profiseesynapseworkspace-WorkspaceDefaultSqlServer_connectionString": {
+			"value": ""
+		},
+		"Profisee REST API_properties_typeProperties_url": {
+			"value": "https://profvm3wklyweb.profisee.biz/profisee21r3/rest/v1"
+		},
+		"ProfiseeDataLakeStorage_properties_typeProperties_url": {
+			"value": "https://profiseedatalake.dfs.core.windows.net"
+		},
+		"ProfiseeKeyVault_properties_typeProperties_baseUrl": {
+			"value": "https://ProfiseeKV.vault.azure.net/"
+		},
+		"profiseesynapseworkspace-WorkspaceDefaultStorage_properties_typeProperties_url": {
+			"value": "https://profiseedatalake.dfs.core.windows.net"
+		},
+		"5MinuteTumbleTrigger_properties_pipeline_parameters_StartTime": {
+			"value": "@trigger().outputs.windowStartTime"
+		},
+		"5MinuteTumbleTrigger_properties_pipeline_parameters_EndTime": {
+			"value": "@trigger().outputs.windowEndTime"
+		},
+		"NewCityLimitsSalesCsv_properties_Copy City Limits Sales CSV from Data Lake_parameters_FolderName": {
+			"value": "@triggerBody().FolderPath"
+		},
+		"NewCityLimitsSalesCsv_properties_Copy City Limits Sales CSV from Data Lake_parameters_FileName": {
+			"value": "@triggerBody().FileName"
+		},
+		"NewCityLimitsSalesCsv_properties_typeProperties_scope": {
+			"value": "/subscriptions/eace1b14-b39d-4d89-b619-ef42f13617cb/resourceGroups/EUS2-PurviewResources/providers/Microsoft.Storage/storageAccounts/profiseedatalake"
+		},
+		"NewSalesCsv_properties_typeProperties_scope": {
+			"value": "/subscriptions/eace1b14-b39d-4d89-b619-ef42f13617cb/resourceGroups/EUS2-PurviewResources/providers/Microsoft.Storage/storageAccounts/profiseedatalake"
+		},
+		"NewShippingCsv_properties_typeProperties_scope": {
+			"value": "/subscriptions/eace1b14-b39d-4d89-b619-ef42f13617cb/resourceGroups/EUS2-PurviewResources/providers/Microsoft.Storage/storageAccounts/profiseedatalake"
+		},
+		"NewTwoWheelsSalesCsv_properties_Copy Two Wheels Sales CSV from Data Lake_parameters_FolderName": {
+			"value": "@triggerBody().FolderPath"
+		},
+		"NewTwoWheelsSalesCsv_properties_Copy Two Wheels Sales CSV from Data Lake_parameters_FileName": {
+			"value": "@triggerBody().FileName"
+		},
+		"NewTwoWheelsSalesCsv_properties_typeProperties_scope": {
+			"value": "/subscriptions/eace1b14-b39d-4d89-b619-ef42f13617cb/resourceGroups/EUS2-PurviewResources/providers/Microsoft.Storage/storageAccounts/profiseedatalake"
+		}
+	}
+}
