@@ -1,11 +1,10 @@
 {
 	"name": "Profisee REST API",
-	"type": "Microsoft.Synapse/workspaces/linkedservices",
 	"properties": {
 		"annotations": [],
 		"type": "RestService",
 		"typeProperties": {
-			"url": "https://profvmmspurview.profisee.biz/profisee/rest/v1",
+			"url": "https://profvm3wklyweb.profisee.biz/profisee21r3/rest/v1",
 			"enableServerCertificateValidation": true,
 			"authenticationType": "Anonymous",
 			"authHeaders": {
@@ -23,5 +22,6 @@
 			"referenceName": "AutoResolveIntegrationRuntime",
 			"type": "IntegrationRuntimeReference"
 		}
-	}
+	},
+	"type": "Microsoft.Synapse/workspaces/linkedservices"
 }
