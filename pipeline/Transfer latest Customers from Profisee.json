@@ -255,7 +255,7 @@
 						"parameters": {
 							"entityId": "Customer",
 							"pageSize": 1000,
-							"attributes": "[Source System],[CustomerType],[Industry],[Address Line 1],[City],[State],[Zip],[Phone Number],[Email Address],[Region],[CityLimitsID],[TwoWheelsID],[Record Source],[Match Cluster],[Match Status],[Golden Record]",
+							"attributes": "[Source System],[CustomerType],[Industry],[Address Line 1],[City],[State],[Zip],[Phone Number],[Email Address],[Region],[CityLimitsID],[TwoWheelsID],[Match Cluster],[Match Status],[Golden Record]",
 							"filter": {
 								"value": "@concat('[lastChgDTM] gt ', replace(pipeline().parameters.StartTime, 'Z', ''), ' AND [lastChgDTM] le ', replace(pipeline().parameters.EndTime, 'Z', ''))",
 								"type": "Expression"
